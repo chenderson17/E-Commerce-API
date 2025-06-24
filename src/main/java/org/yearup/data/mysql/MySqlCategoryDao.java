@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 @Component
 public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
@@ -69,6 +70,25 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
     public Category create(Category category)
     {
         // create a new category
+        String sql = "INSERT INTO categories(category_id,name,description)" + " VALUES(?,?,?)";
+        try(Connection connection = getConnection()){
+            //prepared statement
+            PreparedStatement statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+            statement.setInt(1,category.getCategoryId());
+            statement.setString(2,category.getName());
+            statement.setString(3,category.getDescription());
+            int row = statement.executeUpdate();
+            if(row > 0){
+               ResultSet genereatedKeys = statement.getGeneratedKeys();
+               if(genereatedKeys.next()){
+                   int catId = genereatedKeys.getInt(1);
+                   return  getById(catId);
+               }
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
         return null;
     }
 
