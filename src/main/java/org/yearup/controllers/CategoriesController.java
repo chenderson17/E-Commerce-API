@@ -1,8 +1,10 @@
 package org.yearup.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.yearup.data.CategoryDao;
 import org.yearup.data.ProductDao;
 import org.yearup.models.Category;
@@ -15,8 +17,8 @@ import java.util.List;
     // http://localhost:8080/categories
 // add annotation to allow cross site origin requests
 @RestController
-@CrossOrigin
 @RequestMapping("categories")
+@CrossOrigin
 public class CategoriesController
 {
     private CategoryDao categoryDao;
@@ -29,12 +31,28 @@ public class CategoriesController
         this.categoryDao = categoryDao;
         this.productDao = productDao;
     }
+    @GetMapping("test")
+    public String test(){
+        try {
+            return "This is a test method";
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
+        }
+    }
     // add the appropriate annotation for a get action
     @GetMapping("")
     public List<Category> getAll()
     {
         // find and return all categories
-        return null;
+        try
+        {
+            System.out.println(categoryDao.getAllCategories());
+            return categoryDao.getAllCategories();
+        }
+        catch(Exception ex)
+        {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops... our bad.");
+        }
     }
 
     // add the appropriate annotation for a get action
