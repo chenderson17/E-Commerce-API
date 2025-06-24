@@ -46,7 +46,6 @@ public class CategoriesController
         // find and return all categories
         try
         {
-            System.out.println(categoryDao.getAllCategories());
             return categoryDao.getAllCategories();
         }
         catch(Exception ex)
@@ -56,10 +55,16 @@ public class CategoriesController
     }
 
     // add the appropriate annotation for a get action
+    @GetMapping("{id}")
     public Category getById(@PathVariable int id)
     {
+        try {
+            return categoryDao.getById(id);
+        }
+        catch (Exception e){
+            throw new RuntimeException("Error");
+        }
         // get the category by id
-        return null;
     }
 
     // the url to return all products in category 1 would look like this
